@@ -79,6 +79,17 @@
             });
         }
 
+        
+        $("#formLokasi").on("submit", function(e){
+            e.preventDefault();
+            const lokasi = $("#inputLokasi").val().trim();
+            if(lokasi) {
+                tampilkanCuaca(lokasi);
+            }
+        });
+
+    </script>
+
 </body>
 </html>
  
