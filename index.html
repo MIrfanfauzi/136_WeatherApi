@@ -24,6 +24,61 @@
     <div class="footer">Muhammad Irfan Fauzi</div>
 </div>
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        function formatTanggalWaktu(str) {
+            const bulan = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            const [tanggal, jam] = str.split(' ');
+            const [tahun, bln, tgl] = tanggal.split('-');
+            return `${tgl} ${bulan[parseInt(bln)-1]} ${tahun}, ${jam}`;
+        }
+
+        function tampilkanCuaca(lokasi) {
+            const urlapi = `http://api.weatherapi.com/v1/current.json?key=47c8c79a2de74181bdb64148250810&q=${encodeURIComponent(lokasi)}&aqi=no`;
+            $("#waktuCuaca, #temp, #condition, #lokasi, #tampilan").html("");
+            $("#weatherIcon").hide();
+
+            $.ajax({
+                url: urlapi,
+                type: "GET",
+                dataType: "json",
+                success: function(data){
+                    let suhu = data.current.temp_c;
+                    let lokasiTampil = data.location.name + ", " + data.location.region;
+                    let negara = data.location.country;
+                    let provinsi = data.location.region;
+                    let kecamatan = data.location.tz_id;
+                    let longitude = data.location.lon;
+                    let latitude = data.location.lat;
+                    let icon = "https:" + data.current.condition.icon;
+                    let kondisi = data.current.condition.text;
+                    let waktu = data.location.localtime;
+
+                    $("#waktuCuaca").text(formatTanggalWaktu(waktu));
+                    $("#weatherIcon").attr("src", icon).attr("alt", kondisi).show();
+                    $("#temp").html(suhu + "°C");
+                    $("#condition").html(kondisi);
+                    $("#lokasi").html(lokasiTampil);
+                    $("#tampilan").html(`
+                        <li><strong>Negara:</strong> ${negara}</li>
+                        <li><strong>Provinsi:</strong> ${provinsi}</li>
+                        <li><strong>Kecamatan:</strong> ${kecamatan}</li>
+                        <li><strong>Longitude:</strong> ${longitude}</li>
+                        <li><strong>Latitude:</strong> ${latitude}</li>
+                    `);
+                },
+                error: function(){
+                    $("#waktuCuaca, #temp, #condition, #lokasi, #tampilan").html("");
+                    $("#weatherIcon").hide();
+                    $("#tampilan").html("<li style='color:red;'>Gagal mengambil data cuaca. Pastikan nama lokasi benar.</li>");
+                }
+            });
+        }
+
 </body>
 </html>
  
